@@ -96,28 +96,41 @@ class BurgerBuilder extends Component{
     }
 
     purchaseContinueHandler = () =>{
-       // alert('you bied the burger');
 
-       this.setState({loading : true});
+       // this.setState({loading : true});
 
-       const order = {
-            ingredients : this.state.ingredients,
-            price : this.state.totalPrice, // Always calculate price on the backend........
-            customer : {
-                name : 'Reshab Gupta',
-                address : {
-                    street : 'Champasari',
-                    pincode : '734003',
-                    country : 'India'
-                },
-                email : 'test@test.com'
-            },
-                delivery : 'fastest'
+       // const order = {
+       //      ingredients : this.state.ingredients,
+       //      price : this.state.totalPrice, // Always calculate price on the backend........
+       //      customer : {
+       //          name : 'Reshab Gupta',
+       //          address : {
+       //              street : 'Champasari',
+       //              pincode : '734003',
+       //              country : 'India'
+       //          },
+       //          email : 'test@test.com'
+       //      },
+       //          delivery : 'fastest'
+       // }
+
+       // axios.post('/orders.json', order)
+       //  .then(response => this.setState({loading : false, purchasing : false}))
+       //  .catch(error => this.setState({loading : false, purchasing : false}));
+       const queryParam = [];
+
+       for(let i in this.state.ingredients){
+            queryParam.push(encodeURIComponent(i) + "=" + encodeURIComponent(this.state.ingredients[i]));
        }
 
-       axios.post('/orders.json', order)
-        .then(response => this.setState({loading : false, purchasing : false}))
-        .catch(error => this.setState({loading : false, purchasing : false}));
+       const queryString = queryParam.join('&');
+
+       this.props.history.push({
+                                pathname : '/checkout',
+                                search : '?' + queryString
+                               });
+
+
     }
 
 
