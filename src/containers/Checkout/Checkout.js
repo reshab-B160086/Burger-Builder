@@ -8,22 +8,23 @@ import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSumm
 class Checkout extends Component{
 
     state = {
-        ingredients :{},
+        ingredients :null,
         price : 0
     }
 
-    componentWillMount(){
-
+    UNSAFE_componentWillMount(){
+        console.log('hahahah')
         const query = new URLSearchParams(this.props.location.search);
         const ingredients ={};
         let price = 0;
         for(let params of query.entries()){
-            if(params[0] === 'tatalPrice'){
+            if(params[0] === 'totalPrice'){
                 price = params[1];
-            }else
+            }else{
                ingredients[params[0]] = +params[1];     
+            }
         }
-
+            console.log(ingredients);
             this.setState({ingredients : ingredients, price : price});
         }
 
@@ -41,7 +42,7 @@ class Checkout extends Component{
 
 
     render() {
-       
+        console.log(this.state.ingredients)
         return (
 
             <div>
