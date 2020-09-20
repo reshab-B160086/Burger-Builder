@@ -16,7 +16,11 @@ class contactData extends Component {
                         type : 'text',
                         placeholder : 'Your Name'
                     },
-                    value : ''
+                    value : '',
+                    validation :{
+                        required : true
+                    },
+                    valid : false
                 },
                 street : {
                     elementType : 'input',
@@ -24,7 +28,11 @@ class contactData extends Component {
                         type : 'text',
                         placeholder : 'Street'
                     },
-                    value : ''
+                    value : '',
+                    validation :{
+                        required : true
+                    },
+                    valid : false
                 },
                 pincode : {
                     elementType : 'input',
@@ -32,7 +40,13 @@ class contactData extends Component {
                         type : 'text',
                         placeholder : 'PIN CODE'
                     },
-                    value : ''
+                    value : '',
+                    validation :{
+                        required : true,
+                        minLength : 5,
+                        maxLength : 5
+                    },
+                    valid : false
                 },
                 country : {
                     elementType : 'input',
@@ -40,7 +54,11 @@ class contactData extends Component {
                         type : 'text',
                         placeholder : 'Country'
                     },
-                    value : ''
+                    value : '',
+                    validation :{
+                        required : true
+                    },
+                    valid : false
                 },
                 email : {
                     elementType : 'input',
@@ -48,7 +66,11 @@ class contactData extends Component {
                         type : 'email',
                         placeholder : 'Your Email'
                     },
-                    value : ''
+                    value : '',
+                    validation :{
+                        required : true
+                    },
+                    valid : false
                 },
                 delivery : {
                     elementType : 'select',
@@ -67,10 +89,14 @@ class contactData extends Component {
     orderHandler = (event) =>{
         event.preventDefault();
         this.setState({loading : true});
-
+        const formData = {};
+        for(let formElementIdentifier in this.state.orderForm){
+            formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
+        }
         const order = {
             ingredients : this.props.ingredients,
             price : this.props.price, // Always calculate price on the backend........
+            orderData : formData
        }
 
        axios.post('/orders.json', order)
@@ -88,8 +114,29 @@ class contactData extends Component {
         }
 
         updatedFormElement.value = event.target.value;
+        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
         updatedOrderForm[inputIdentifier] = updatedFormElement;
+        console.log(updatedFormElement);
         this.setState({orderForm : updatedOrderForm});
+    }
+
+    checkValidity(value, rules){
+        let isValid = true;
+
+        if(rules.required){
+            isValid = value.trim() !== '' && isValid;
+        }
+
+        if(rules.minLength){
+            isValid = value.length >= rules.minLength && isValid ;
+        }
+
+         if(rules.maxLength){
+            isValid = value.length <= rules.maxLength && isValid ;
+        }
+
+
+        return isValid;
     }
 
     render() {
@@ -104,7 +151,7 @@ class contactData extends Component {
         }
 
         let form = (
-                 <form>
+                 <form onSubmit = {this.orderHandler} >
                     {formElementsArray.map(formElement =>(
                       <Input 
                             key = {formElement.id}
@@ -113,7 +160,7 @@ class contactData extends Component {
                             value = {formElement.config.value}
                             change = {(event) => this.onChangeHandler(event, formElement.id)} />  
                     ))}        
-                    <Button btnTyp ="Success" clicked ={this.orderHandler}>Order</Button>
+                    <Button btnTyp ="Success">Order</Button>
                 </form>
             );
 
